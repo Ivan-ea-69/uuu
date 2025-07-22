@@ -1,13 +1,12 @@
-controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-	
-})
 function Distance (p1: Sprite, p2: Sprite) {
     x = (p1.x - p2.x) ** 2
     y = (p1.x - p2.x) ** 2
     return Math.sqrt(x + y)
 }
 mp.onButtonEvent(mp.MultiplayerButton.A, ControllerButtonEvent.Pressed, function (player2) {
-	
+    if (mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One)).overlapsWith(mySprite)) {
+        info.setLife(3)
+    }
 })
 mp.onLifeZero(function (player2) {
     sprites.destroy(mp.getPlayerSprite(player2), effects.disintegrate, 200)
@@ -26,9 +25,7 @@ mp.onLifeZero(function (player2) {
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (sprite == mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One))) {
-        if (!(controller.A.isPressed())) {
-            info.player1.changeLifeBy(-1)
-        }
+        info.player1.changeLifeBy(-1)
     } else if (sprite == mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two))) {
         info.player2.changeLifeBy(-1)
     } else if (sprite == mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three))) {
@@ -42,8 +39,7 @@ let random = 0
 let y = 0
 let x = 0
 let count = 0
-let mySprite: Sprite = null
-info.startCountdown(40)
+let mySprite = 0
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -168,25 +164,25 @@ scene.setBackgroundImage(img`
     `)
 mp.setPlayerSprite(mp.playerSelector(mp.PlayerNumber.One), sprites.create(assets.image`Y2`, SpriteKind.Player))
 mp.moveWithButtons(mp.playerSelector(mp.PlayerNumber.One))
-info.player1.setLife(1)
+info.player1.setLife(3)
 mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One)).setPosition(8, 8)
 mp.setPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two), sprites.create(assets.image`Y`, SpriteKind.Player))
 mp.moveWithButtons(mp.playerSelector(mp.PlayerNumber.Two))
-info.player2.setLife(1)
+info.player2.setLife(3)
 mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two)).setPosition(152, 8)
 mp.setPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three), sprites.create(assets.image`DDDD0`, SpriteKind.Player))
 mp.moveWithButtons(mp.playerSelector(mp.PlayerNumber.Three))
-info.player3.setLife(1)
+info.player3.setLife(3)
 mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three)).setPosition(8, 112)
 mp.setPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four), sprites.create(assets.image`DDDD`, SpriteKind.Player))
 mp.moveWithButtons(mp.playerSelector(mp.PlayerNumber.Four))
-info.player4.setLife(1)
+info.player4.setLife(3)
 mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four)).setPosition(152, 112)
 mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One)).setStayInScreen(true)
 mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two)).setStayInScreen(true)
 mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three)).setStayInScreen(true)
 mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four)).setStayInScreen(true)
-mySprite = sprites.create(assets.image`Y2`, SpriteKind.Enemy)
+mySprite = 0
 animation.runImageAnimation(
 mySprite,
 [img`
@@ -312,7 +308,9 @@ mySprite,
 200,
 false
 )
-pause(1000)
+mySprite.setKind(SpriteKind.Enemy)
+mySprite.setPosition(77, 56)
+mySprite.setStayInScreen(true)
 count = 0
 game.onUpdateInterval(1000, function () {
     random = randint(1, 4)
@@ -327,12 +325,5 @@ game.onUpdateInterval(1000, function () {
         mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three)), 50)
     } else {
         mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four)), 50)
-    }
-})
-forever(function () {
-    if (info.countdown() > 40) {
-        if (count < 1) {
-            mp.gameOverPlayerWin(mp.playerSelector(mp.PlayerNumber.One))
-        }
     }
 })
