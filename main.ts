@@ -38,7 +38,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     }
     mySprite.setPosition(75, 58)
 })
-let random = 0
 let y = 0
 let x = 0
 let count = 0
@@ -314,25 +313,21 @@ false
 )
 pause(1000)
 count = 0
-game.onUpdateInterval(1000, function () {
-    random = randint(1, 4)
-    while (mp.getPlayerState(mp.getPlayerByNumber(random), MultiplayerState.life) == 0) {
-        random = randint(1, 4)
-    }
-    if (random == 1) {
-        mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One)), 50)
-    } else if (random == 2) {
-        mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two)), 50)
-    } else if (random == 3) {
-        mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three)), 50)
-    } else {
-        mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four)), 50)
-    }
-})
 forever(function () {
     if (info.countdown() > 40) {
         if (count < 1) {
             mp.gameOverPlayerWin(mp.playerSelector(mp.PlayerNumber.One))
         }
+    }
+})
+game.onUpdateInterval(100, function () {
+    if (Distance(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One)), mySprite) < Distance(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two)), mySprite)) {
+        mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.One)), 50)
+    } else if (Distance(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two)), mySprite) < Distance(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three)), mySprite)) {
+        mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two)), 50)
+    } else if (Distance(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three)), mySprite) < Distance(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four)), mySprite)) {
+        mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Three)), 50)
+    } else {
+        mySprite.follow(mp.getPlayerSprite(mp.playerSelector(mp.PlayerNumber.Four)), 50)
     }
 })
